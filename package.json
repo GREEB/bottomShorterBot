@@ -1,0 +1,23 @@
+{
+  "name": "bottom-shorter-bot",
+  "version": "1.0.0",
+  "description": "A bot for a group of bottom shorters",
+  "main": "app.js",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "coingecko-api": "^1.0.10",
+    "dotenv": "^8.2.0",
+    "fp-ts": "^2.9.5",
+    "got": "^11.8.2",
+    "kucoin-node-api": "^1.2.1",
+    "moment": "^2.29.1",
+    "percentage-change": "^3.0.0",
+    "percentage-difference": "^2.0.0",
+    "sanitize": "^2.1.0",
+    "simple-json-db": "^1.2.3",
+    "string-pixel-width": "^1.10.0",
+    "table": "^6.0.7",
+    "telegraf": "^4.1.2"
+  }
+}
