@@ -25,7 +25,8 @@ bot.command('balance', (ctx) => {
 
     if (ctx.chat.id === parseInt(process.env.CHAT_ID) || ctx.chat.id === parseInt(process.env.DEV_CHAT_ID)) {
     } else {
-        ctx.replyWithMarkdown('I dont obey you')
+        ctx.replyWithMarkdown('I dont obey you');
+        return;
     }
     const m = ctx.update.message
     const d = m.text.split(' ')
