@@ -11,20 +11,22 @@ const pixelWidth = require('string-pixel-width');
 const axios = require('axios').default;
 
 function getPercentageChange(o, n) { var d = o - n; return (d / o) * 100; }
-function truncateString(str, num) { if (str.length <= num) { return str} return str.slice(0, num) }
-
-function AuthChat(ctx) { if (ctx.chat.id !== parseInt(process.env.CHAT_ID) || ctx.chat.id !== parseInt(process.env.DEV_CHAT_ID)) return; }
+function truncateString(str, num) { if (str.length <= num) { return str } return str.slice(0, num) }
 async function getEthPrice() { return await axios.get("https://api.etherscan.io/api?module=stats&action=ethprice") }
 
 bot.command('getid', (ctx) => {
-    AuthChat(ctx); ctx.replyWithMarkdown(`This chats id is: ${ctx.update.message.chat.id}`)
+    ctx.replyWithMarkdown(`This chats id is: ${ctx.update.message.chat.id}`)
 })
 bot.command('sauce', (ctx) => {
-    AuthChat(ctx); ctx.replyWithMarkdown(` You can find the Project [here](${process.env.PROJECT_URI}) `)
+    ctx.replyWithMarkdown(` You can find the Project [here](${process.env.PROJECT_URI}) `)
 })
 
 bot.command('balance', (ctx) => {
-    AuthChat(ctx);
+
+    if (ctx.chat.id === parseInt(process.env.CHAT_ID) || ctx.chat.id === parseInt(process.env.DEV_CHAT_ID)) {
+    } else {
+        ctx.replyWithMarkdown('I dont obey you')
+    }
     const m = ctx.update.message
     const d = m.text.split(' ')
 
@@ -42,7 +44,9 @@ bot.command('balance', (ctx) => {
         ctx.replyWithMarkdown("Input not valid, example: ```c++\n/balance " + (Math.random() * 20).toFixed(2) + "``` ")
         return;
     }
-
+    if (process.env.DEBUG) {
+        console.log(`${m.from.id}: ${m.text}`);
+    }
     if (db.has(m.from.id)) {
         const me = db.JSON()[m.from.id]
         const old = me.new
@@ -51,8 +55,7 @@ bot.command('balance', (ctx) => {
         db.set(
             m.from.id,
             {
-                'FirstName': m.from.first_name,
-                'Username': m.from.username,
+                'Username': m.from.first_name,
                 'new': val,
                 'old': old,
                 'change': getPercentageChange(val, old),
@@ -67,8 +70,7 @@ bot.command('balance', (ctx) => {
         db.set(
             m.from.id,
             {
-                'FirstName': m.from.first_name,
-                'Username': m.from.username,
+                'Username': m.from.first_name,
                 'change': 0,
                 'new': val,
                 'updates': 1,
@@ -83,10 +85,18 @@ bot.command('lb', (ctx) => {
     const m = ctx.update.message
     const dbn = db.JSON()
     let msg = []
+    if (process.env.DEBUG) {
+        console.log(`${m.from.id}-${ctx.chat.id}: ${m.text}`);
+    }
+    if (ctx.chat.id === parseInt(process.env.CHAT_ID) || ctx.chat.id === parseInt(process.env.DEV_CHAT_ID)) {
+    } else {
+        ctx.replyWithMarkdown('I dont obey you')
+        return;
+    }
 
-    AuthChat(m);
 
     async function dodo() {
+
         const ethusd = await getEthPrice()
 
         if (Object.keys(dbn).length === 0) { ctx.replyWithMarkdown(`LB empty`); return }
@@ -100,7 +110,6 @@ bot.command('lb', (ctx) => {
         for (const user in daad) {
             let balance
             const e = daad[user];
-            if (typeof e.Username == "undefined") e.Username = e.FirstName
             const name = truncateString(e.Username, 5).charAt(0).toUpperCase() + truncateString(e.Username, 5).slice(1)
             const namewidth = pixelWidth(name, { size: 14 });
 
@@ -130,6 +139,3 @@ bot.launch()
 
 process.once('SIGINT', () => bot.stop('SIGINT'))
 process.once('SIGTERM', () => bot.stop('SIGTERM'))
-
-
-
