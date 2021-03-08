@@ -29,9 +29,10 @@ bot.command('balance', (ctx) => {
         return;
     }
     const m = ctx.update.message
-    const d = m.text.split(' ')
-
-    if (m.text.length === 8) {
+    let d
+    if (m.text.includes(' ')){
+        d = m.text.split(' ')
+    }else{
         ctx.replyWithMarkdown("You need to set a valid Number, example: ```c++\n/balance " + (Math.random() * 20).toFixed(2) + "``` ")
         return;
     }
